@@ -1,3 +1,6 @@
+# Editors
+*.swp
+
 # Prerequisites
 *.d
 
@@ -53,3 +56,15 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+build/
+
+# Ignore controller binaries
+# Ignore all
+controllers/*/*
+# Unignore all with extensions and Makefiles
+!controllers/*/*.*
+!controllers/*/Makefile
+# Restore dirs
+!controllers/*/
+
