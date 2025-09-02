@@ -1,10 +1,13 @@
 #VRML_SIM R2025a utf8
-PROTO FourWheelsRobot [
-
+PROTO four_wheels_robot [
+  field SFVec3f    translation  0 0 0.04
+  field SFRotation rotation     0 0 1 0
+  field SFFloat    bodyMass     1
 ]
 {
   Robot {
-    translation 0 0 0.04
+    translation IS translation
+    rotation IS rotation
     children [
       DEF _WHEELER_BODY Shape {
         appearance Appearance {
@@ -128,6 +131,7 @@ PROTO FourWheelsRobot [
             }
           }
         ]
+        name "ds_left"
       }
       DistanceSensor {
         translation 0.1 -0.03 0
@@ -135,11 +139,14 @@ PROTO FourWheelsRobot [
         children [
           USE _WHEELER_SENSOR
         ]
-        name "distance sensor(1)"
+        name "ds_right"
       }
     ]
     boundingObject USE _WHEELER_BODY
     physics Physics {
+      density -1
+      mass IS bodyMass
     }
+    controller "four_wheeled_collision_avoidance"
   }
 }
