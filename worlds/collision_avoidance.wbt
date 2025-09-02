@@ -5,13 +5,14 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/factory/containers/protos/WoodenBox.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/gctronic/e-puck/protos/E-puck.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/appearances/protos/OldSteel.proto"
 
 WorldInfo {
   basicTimeStep 16
 }
 Viewpoint {
-  orientation 0.14842652266541667 -0.04785266239367378 -0.9877649973912265 3.758175464777367
-  position 2.0308358915228366 -1.1573042973343843 1.100429481615972
+  orientation 0.24039389642517137 -0.10501885805922871 -0.9649776235817386 3.9394903606606673
+  position 1.4337256143698025 -1.6021461122142568 1.346472875578114
 }
 TexturedBackground {
 }
@@ -38,7 +39,7 @@ WoodenBox {
   size 0.1 0.1 0.1
 }
 E-puck {
-  controller "epuck_go_forward"
+  controller "epuck_avoid_collision"
 }
 Solid {
   translation -0.309347 0.325432 0.3
@@ -46,7 +47,11 @@ Solid {
   children [
     Shape {
       appearance PBRAppearance {
-        roughness 1
+        baseColorMap ImageTexture {
+          url [
+            "../libraries/red_brick_wall.jpg"
+          ]
+        }
         metalness 0
       }
       geometry DEF BALL_GEOMETRY Sphere {
@@ -55,6 +60,7 @@ Solid {
       }
     }
   ]
+  name "small ball"
   boundingObject USE BALL_GEOMETRY
   physics Physics {
   }
@@ -71,7 +77,7 @@ Solid {
       }
     }
   ]
-  name "solid(1)"
+  name "large ball"
   boundingObject USE BALL_SHAPE
   physics Physics {
   }
@@ -80,7 +86,7 @@ Solid {
   translation -0.5 0 0.05
   children [
     DEF WALL_SEG Shape {
-      appearance Appearance {
+      appearance OldSteel {
       }
       geometry Box {
         size 0.05 1 0.1
