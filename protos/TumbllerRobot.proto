@@ -40,70 +40,6 @@ PROTO TumbllerRobot [
         boundingObject USE CHASSIS_SHAPE
       }
 
-      # Left wheel
-      DEF LEFT_WHEEL Solid {
-        translation 0.079 0  -0.032
-        rotation 0 1 0 1.57079633
-        physics Physics { density -1 mass IS mass_wheel }
-        children [
-          DEF LEFT_WHEEL_SHAPE Shape {
-            appearance PBRAppearance { baseColor 0.1 0.1 0.1 }
-            geometry Cylinder { height 0.025 radius 0.032 }
-          }
-        ]
-        boundingObject USE LEFT_WHEEL_SHAPE
-      }
-
-      # Right wheel
-      DEF RIGHT_WHEEL Solid {
-        translation -0.079 0 -0.032
-        rotation 0 1 0 1.57079633
-        physics Physics { density -1 mass IS mass_wheel }
-        children [
-          DEF RIGHT_WHEEL_SHAPE Shape {
-            appearance PBRAppearance { baseColor 0.1 0.1 0.1 }
-            geometry Cylinder { height 0.025 radius 0.032 }
-          }
-        ]
-        boundingObject USE RIGHT_WHEEL_SHAPE
-      }
-
-      # Motor+shaft left (single solid)
-      DEF MOTOR_SHAFT_LEFT Solid {
-        translation -0.036 0 -0.025
-        rotation 0 1 0 1.57079633
-        physics Physics { density -1 mass IS mass_motor_shaft }
-        children [
-          DEF MOTOR_SHAFT_LEFT_BODY Shape {
-            appearance PBRAppearance { baseColor 0.7 0.7 0.7 metalness 0.6 }
-            geometry Cylinder { height 0.045 radius 0.018 }
-          }
-          DEF MOTOR_SHAFT_LEFT_SHAFT Shape {
-            appearance PBRAppearance { baseColor 0.7 0.7 0.7 }
-            geometry Cylinder { height 0.03 radius 0.002 }
-          }
-        ]
-        boundingObject USE MOTOR_SHAFT_LEFT_BODY
-      }
-
-      # Motor+shaft right
-      DEF MOTOR_SHAFT_RIGHT Solid {
-        translation 0.036 0 -0.025
-        rotation 0 1 0 1.57079633
-        physics Physics { density -1 mass IS mass_motor_shaft }
-        children [
-          DEF MOTOR_SHAFT_RIGHT_BODY Shape {
-            appearance PBRAppearance { baseColor 0.7 0.7 0.7 metalness 0.6 }
-            geometry Cylinder { height 0.045 radius 0.018 }
-          }
-          DEF MOTOR_SHAFT_RIGHT_SHAFT Shape {
-            appearance PBRAppearance { baseColor 0.7 0.7 0.7 }
-            geometry Cylinder { height 0.03 radius 0.002 }
-          }
-        ]
-        boundingObject USE MOTOR_SHAFT_RIGHT_BODY
-      }
-
       # Battery plate (transparent acrylic)
       DEF BATTERY_PLATE Solid {
         translation 0 0 0.046
@@ -164,7 +100,7 @@ PROTO TumbllerRobot [
 
       # Kickstand (transparent acrylic)
       DEF KICKSTAND Solid {
-        translation 0 0  -0.008
+        translation 0 0.04 -0.008
         rotation 0 0 1 0
         physics Physics { density -1 mass IS mass_kickstand }
         children [
@@ -283,6 +219,70 @@ PROTO TumbllerRobot [
           DEF RSUPPORT_SHAPE Shape { geometry Box { size 0.04 0.04 0.002 } appearance PBRAppearance { baseColor 0.85 0.67 0.13 } }
         ]
         boundingObject USE RSUPPORT_SHAPE
+      }
+
+      # Left wheel
+      DEF LEFT_WHEEL Solid {
+        translation 0.079 0  -0.032
+        rotation 0 1 0 1.57079633
+        physics Physics { density -1 mass IS mass_wheel }
+        children [
+          DEF LEFT_WHEEL_SHAPE Shape {
+            appearance PBRAppearance { baseColor 0.1 0.1 0.1 }
+            geometry Cylinder { height 0.025 radius 0.032 }
+          }
+        ]
+        boundingObject USE LEFT_WHEEL_SHAPE
+      }
+
+      # Right wheel
+      DEF RIGHT_WHEEL Solid {
+        translation -0.079 0 -0.032
+        rotation 0 1 0 1.57079633
+        physics Physics { density -1 mass IS mass_wheel }
+        children [
+          DEF RIGHT_WHEEL_SHAPE Shape {
+            appearance PBRAppearance { baseColor 0.1 0.1 0.1 }
+            geometry Cylinder { height 0.025 radius 0.032 }
+          }
+        ]
+        boundingObject USE RIGHT_WHEEL_SHAPE
+      }
+
+      # Motor+shaft left (single solid)
+      DEF MOTOR_SHAFT_LEFT Solid {
+        translation -0.036 0 -0.025
+        rotation 0 1 0 1.57079633
+        physics Physics { density -1 mass IS mass_motor_shaft }
+        children [
+          DEF MOTOR_SHAFT_LEFT_BODY Shape {
+            appearance PBRAppearance { baseColor 0.7 0.7 0.7 metalness 0.6 }
+            geometry Cylinder { height 0.045 radius 0.018 }
+          }
+          DEF MOTOR_SHAFT_LEFT_SHAFT Shape {
+            appearance PBRAppearance { baseColor 0.7 0.7 0.7 }
+            geometry Cylinder { height 0.03 radius 0.002 }
+          }
+        ]
+        boundingObject USE MOTOR_SHAFT_LEFT_BODY
+      }
+
+      # Motor+shaft right
+      DEF MOTOR_SHAFT_RIGHT Solid {
+        translation 0.036 0 -0.025
+        rotation 0 1 0 1.57079633
+        physics Physics { density -1 mass IS mass_motor_shaft }
+        children [
+          DEF MOTOR_SHAFT_RIGHT_BODY Shape {
+            appearance PBRAppearance { baseColor 0.7 0.7 0.7 metalness 0.6 }
+            geometry Cylinder { height 0.045 radius 0.018 }
+          }
+          DEF MOTOR_SHAFT_RIGHT_SHAFT Shape {
+            appearance PBRAppearance { baseColor 0.7 0.7 0.7 }
+            geometry Cylinder { height 0.03 radius 0.002 }
+          }
+        ]
+        boundingObject USE MOTOR_SHAFT_RIGHT_BODY
       }
 
       # Joints for wheels: HingeJoint with RotationalMotor
