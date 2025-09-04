@@ -1,0 +1,82 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/factory/containers/protos/WoodenBox.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/appearances/protos/OldSteel.proto"
+EXTERNPROTO "../protos/TumbllerRobot.proto"
+
+WorldInfo {
+  basicTimeStep 16
+}
+Viewpoint {
+  orientation -0.046443005014958794 -0.02534009308560998 -0.998599482759526 2.143887775248508
+  position 0.17764741115703978 0.2793451618050312 0.0752624650624466
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+Floor {
+  size 1 1
+}
+WoodenBox {
+  translation -0.316289 -0.396806 0.05
+  rotation 0 0 1 1.77369
+  size 0.1 0.1 0.1
+}
+WoodenBox {
+  translation 0.165934 0.220885 0.05
+  rotation 0 0 1 1.309
+  name "wooden box(2)"
+  size 0.1 0.1 0.1
+}
+WoodenBox {
+  translation 0.229083 -0.34108 0.05
+  rotation 0 0 1 0.438514
+  name "wooden box(1)"
+  size 0.1 0.1 0.1
+}
+Solid {
+  translation -0.5 0 0.05
+  children [
+    DEF WALL_SEG Shape {
+      appearance OldSteel {
+      }
+      geometry Box {
+        size 0.05 1 0.1
+      }
+    }
+  ]
+  name "wall1"
+  boundingObject USE WALL_SEG
+}
+Solid {
+  translation 0 0.5 0.05
+  rotation 0 0 1 1.5708
+  children [
+    USE WALL_SEG
+  ]
+  name "wall2"
+  boundingObject USE WALL_SEG
+}
+Solid {
+  translation 0.5 0 0.05
+  children [
+    USE WALL_SEG
+  ]
+  name "wall3"
+  boundingObject USE WALL_SEG
+}
+Solid {
+  translation 0 -0.5 0.05
+  rotation 0 0 1 1.5708
+  children [
+    USE WALL_SEG
+  ]
+  name "wall4"
+  boundingObject USE WALL_SEG
+}
+TumbllerRobot {
+}

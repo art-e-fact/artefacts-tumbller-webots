@@ -1,0 +1,313 @@
+#VRML_SIM R2025a utf8
+
+PROTO TumbllerRobot [
+  field SFVec3f    translation        0 0 0.064
+  field SFRotation rotation           0 0 1 0
+  field SFString   controller         "generic_controller"
+
+  # Mass fields (kg) — sum ~0.8
+  field SFFloat    mass_chassis       0.25
+  field SFFloat    mass_wheel         0.08
+  field SFFloat    mass_motor_shaft   0.10
+  field SFFloat    mass_battery       0.15
+  field SFFloat    mass_pcb           0.03
+  field SFFloat    mass_top_plate     0.05
+  field SFFloat    mass_supports      0.03
+  field SFFloat    mass_kickstand     0.02
+  field SFFloat    mass_misc          0.01
+]
+{
+  Robot {
+    translation IS translation
+    rotation IS rotation
+    controller IS controller
+
+    children [
+      # Chassis (lowest plate) - metallic blue
+      DEF CHASSIS Solid {
+        translation 0 0 0
+        rotation 0 0 1 0
+        physics Physics { density -1 mass IS mass_chassis }
+        children [
+          DEF CHASSIS_SHAPE Shape {
+            appearance PBRAppearance {
+              baseColor 0.06 0.25 0.85
+              metalness 0.8
+              roughness 0.35
+            }
+            geometry Box { size 0.12 0.08 0.002 }
+          }
+        ]
+        boundingObject USE CHASSIS_SHAPE
+      }
+
+      # Left wheel
+      DEF LEFT_WHEEL Solid {
+        translation 0.079 0  -0.032
+        rotation 0 1 0 1.57079633
+        physics Physics { density -1 mass IS mass_wheel }
+        children [
+          DEF LEFT_WHEEL_SHAPE Shape {
+            appearance PBRAppearance { baseColor 0.1 0.1 0.1 }
+            geometry Cylinder { height 0.025 radius 0.032 }
+          }
+        ]
+        boundingObject USE LEFT_WHEEL_SHAPE
+      }
+
+      # Right wheel
+      DEF RIGHT_WHEEL Solid {
+        translation -0.079 0 -0.032
+        rotation 0 1 0 1.57079633
+        physics Physics { density -1 mass IS mass_wheel }
+        children [
+          DEF RIGHT_WHEEL_SHAPE Shape {
+            appearance PBRAppearance { baseColor 0.1 0.1 0.1 }
+            geometry Cylinder { height 0.025 radius 0.032 }
+          }
+        ]
+        boundingObject USE RIGHT_WHEEL_SHAPE
+      }
+
+      # Motor+shaft left (single solid)
+      DEF MOTOR_SHAFT_LEFT Solid {
+        translation -0.036 0 -0.025
+        rotation 0 1 0 1.57079633
+        physics Physics { density -1 mass IS mass_motor_shaft }
+        children [
+          DEF MOTOR_SHAFT_LEFT_BODY Shape {
+            appearance PBRAppearance { baseColor 0.7 0.7 0.7 metalness 0.6 }
+            geometry Cylinder { height 0.045 radius 0.018 }
+          }
+          DEF MOTOR_SHAFT_LEFT_SHAFT Shape {
+            appearance PBRAppearance { baseColor 0.7 0.7 0.7 }
+            geometry Cylinder { height 0.13 radius 0.002 }
+          }
+        ]
+        boundingObject USE MOTOR_SHAFT_LEFT_BODY
+      }
+
+      # Motor+shaft right
+      DEF MOTOR_SHAFT_RIGHT Solid {
+        translation 0.036 0 -0.025
+        rotation 0 1 0 1.57079633
+        physics Physics { density -1 mass IS mass_motor_shaft }
+        children [
+          DEF MOTOR_SHAFT_RIGHT_BODY Shape {
+            appearance PBRAppearance { baseColor 0.7 0.7 0.7 metalness 0.6 }
+            geometry Cylinder { height 0.045 radius 0.018 }
+          }
+          DEF MOTOR_SHAFT_RIGHT_SHAFT Shape {
+            appearance PBRAppearance { baseColor 0.7 0.7 0.7 }
+            geometry Cylinder { height 0.03 radius 0.002 }
+          }
+        ]
+        boundingObject USE MOTOR_SHAFT_RIGHT_BODY
+      }
+
+      # Battery plate (transparent acrylic)
+      DEF BATTERY_PLATE Solid {
+        translation 0 0 0.046
+        rotation 0 0 1 0
+        physics Physics { density -1 mass IS mass_supports }
+        children [
+          DEF BATTERY_PLATE_SHAPE Shape {
+            appearance PBRAppearance { baseColor 0.9 0.9 0.95 transparency 0.45 }
+            geometry Box { size 0.12 0.08 0.002 }
+          }
+        ]
+        boundingObject USE BATTERY_PLATE_SHAPE
+      }
+
+      # Top plate (transparent acrylic)
+      DEF TOP_PLATE Solid {
+        translation 0 0 0.07
+        rotation 0 0 1 0
+        physics Physics { density -1 mass IS mass_top_plate }
+        children [
+          DEF TOP_PLATE_SHAPE Shape {
+            appearance PBRAppearance { baseColor 0.95 0.95 0.98 transparency 0.45 }
+            geometry Box { size 0.12 0.08 0.002 }
+          }
+        ]
+        boundingObject USE TOP_PLATE_SHAPE
+      }
+
+      # Battery (black plastic)
+      DEF BATTERY Solid {
+        translation 0 0 0.056
+        rotation 0 0 1 0
+        physics Physics { density -1 mass IS mass_battery }
+        children [
+          DEF BATTERY_SHAPE Shape {
+            appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.6 }
+            geometry Box { size 0.08 0.055 0.022 }
+          }
+        ]
+        boundingObject USE BATTERY_SHAPE
+      }
+
+      # PCB (green)
+      DEF PCB Solid {
+        translation 0 0 0.01
+        rotation 0 0 1 0
+        physics Physics { density -1 mass IS mass_pcb }
+        children [
+          DEF PCB_SHAPE Shape {
+            appearance Appearance {
+                  material Material { diffuseColor 0.1 0.6 0.1 }
+                }
+            geometry Box { size 0.095 0.08 0.002 }
+          }
+        ]
+        boundingObject USE PCB_SHAPE
+      }
+
+      # Kickstand (transparent acrylic)
+      DEF KICKSTAND Solid {
+        translation 0 0  -0.008
+        rotation 0 0 1 0
+        physics Physics { density -1 mass IS mass_kickstand }
+        children [
+          DEF KICKSTAND_SHAPE Shape {
+            appearance PBRAppearance { baseColor 0.95 0.95 0.98 transparency 0.45 }
+            geometry Box { size 0.055 0.068 0.002 }
+          }
+        ]
+        boundingObject USE KICKSTAND_SHAPE
+      }
+
+      # Supporters between plates (golden)
+      DEF SUPPORTER_FLAT Solid {
+        translation 0.054 0.036 0.058
+        rotation 0 0 0 0
+        physics Physics { density -1 mass IS mass_supports }
+        children [
+          DEF SUPPORTER_FLAT_SHAPE Shape {
+            appearance PBRAppearance { baseColor 0.85 0.67 0.13 metalness 0.6 }
+            geometry Cylinder { height 0.022 radius 0.002 }
+          }
+        ]
+        boundingObject USE SUPPORTER_FLAT_SHAPE
+      }
+      
+      Solid {
+        translation 0.054 -0.036 0.058
+        rotation 0 0 0 0
+        physics Physics { density -1 mass IS mass_supports }
+        children [
+          USE SUPPORTER_FLAT_SHAPE
+        ]
+        boundingObject USE SUPPORTER_FLAT_SHAPE
+      }
+      
+      Solid {
+        translation -0.054 -0.036 0.058
+        rotation 0 0 0 0
+        physics Physics { density -1 mass IS mass_supports }
+        children [
+          USE SUPPORTER_FLAT_SHAPE
+        ]
+        boundingObject USE SUPPORTER_FLAT_SHAPE
+      }
+      
+      Solid {
+        translation -0.054 0.036 0.058
+        rotation 0 0 0 0
+        physics Physics { density -1 mass IS mass_supports }
+        children [
+          USE SUPPORTER_FLAT_SHAPE
+        ]
+        boundingObject USE SUPPORTER_FLAT_SHAPE
+      }
+      
+      Solid {
+        translation 0.054 0.036 0.023
+        rotation 0 0 0 0
+        physics Physics { density -1 mass IS mass_supports }
+        children [
+          DEF LONG_SUPPORTER_FLAT_SHAPE Shape {
+            appearance PBRAppearance { baseColor 0.85 0.67 0.13 metalness 0.6 }
+            geometry Cylinder { height 0.046 radius 0.002 }
+          }
+        ]
+        boundingObject USE SUPPORTER_FLAT_SHAPE
+      }
+      
+      Solid {
+        translation 0.054 -0.036 0.023
+        rotation 0 0 0 0
+        physics Physics { density -1 mass IS mass_supports }
+        children [
+          USE LONG_SUPPORTER_FLAT_SHAPE
+        ]
+        boundingObject USE SUPPORTER_FLAT_SHAPE
+      }
+      
+      Solid {
+        translation -0.054 -0.036 0.023
+        rotation 0 0 0 0
+        physics Physics { density -1 mass IS mass_supports }
+        children [
+          USE LONG_SUPPORTER_FLAT_SHAPE
+        ]
+        boundingObject USE SUPPORTER_FLAT_SHAPE
+      }
+      
+      Solid {
+        translation -0.054 0.036 0.023
+        rotation 0 0 0 0
+        physics Physics { density -1 mass IS mass_supports }
+        children [
+          USE LONG_SUPPORTER_FLAT_SHAPE
+        ]
+        boundingObject USE SUPPORTER_FLAT_SHAPE
+      }
+
+      # Left support (lsupport) approximated
+      DEF LSUPPORT Solid {
+        translation -0.06 0 -0.022
+        rotation 0 1 0 1.57079633
+        physics Physics { density -1 mass IS mass_supports }
+        children [
+          DEF LSUPPORT_SHAPE Shape { geometry Box { size 0.04 0.04 0.002 } appearance PBRAppearance { baseColor 0.85 0.67 0.13 } }
+        ]
+        boundingObject USE LSUPPORT_SHAPE
+      }
+
+      # Right support
+      DEF RSUPPORT Solid {
+        translation 0.06 0 -0.022
+        rotation 0 1 0 1.57079633
+        physics Physics { density -1 mass IS mass_supports }
+        children [
+          DEF RSUPPORT_SHAPE Shape { geometry Box { size 0.04 0.04 0.002 } appearance PBRAppearance { baseColor 0.85 0.67 0.13 } }
+        ]
+        boundingObject USE RSUPPORT_SHAPE
+      }
+
+      # Joints for wheels: HingeJoint with RotationalMotor
+      HingeJoint {
+        jointParameters JointParameters { axis 1 0 0 }
+        device RotationalMotor { name "left_motor" maxTorque 1.0 }
+        anchorSolid USE MOTOR_SHAFT_LEFT
+        endPointSolid USE LEFT_WHEEL
+      }
+
+      HingeJoint {
+        jointParameters JointParameters { axis 1 0 0 }
+        device RotationalMotor { name "right_motor" maxTorque 1.0 }
+        anchorSolid USE MOTOR_SHAFT_RIGHT
+        endPointSolid USE RIGHT_WHEEL
+      }
+
+    ] # children
+
+    # Robot devices
+    devices [
+      Gyro { name "gyro" }
+      Accelerometer { name "accel" }
+      DistanceSensor { name "ds_front" }
+    ]
+  } # Robot
+}

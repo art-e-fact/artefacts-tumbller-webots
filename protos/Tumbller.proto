@@ -1,0 +1,337 @@
+#VRML_SIM R2025a utf8
+PROTO Tumbller [
+  field SFVec3f    translation        0 0 0.064 # lift so wheels touch ground (meters)
+  field SFRotation rotation           0 0 0 0   # robot's up axis is Z
+  field SFString   controller         "generic_controller"
+  # mass fields (kg). Defaults chosen to sum to 0.8 kg (800 g)
+  field SFFloat    mass_plate         0.18
+  field SFFloat    mass_kickstand     0.02
+  field SFFloat    mass_lsupport_l    0.04
+  field SFFloat    mass_lsupport_r    0.04
+  field SFFloat    mass_motor_l        0.06
+  field SFFloat    mass_motor_r        0.06
+  field SFFloat    mass_shaft_l        0.00    # included in motor mass (kept 0)
+  field SFFloat    mass_shaft_r        0.00
+  field SFFloat    mass_wheel_l       0.12
+  field SFFloat    mass_wheel_r       0.12
+  field SFFloat    mass_battery_plate 0.05
+  field SFFloat    mass_top_plate     0.02
+  field SFFloat    mass_battery       0.08
+  field SFFloat    mass_pcb           0.01
+] {
+  Robot {
+    translation IS translation
+    rotation IS rotation
+    controller IS controller
+    # Allow self-collision if desired (commented out by default)
+    # selfCollision TRUE
+
+    children [
+
+      #========================
+      # Lowest plate (metallic blue)
+      #========================
+      DEF PLATE Solid {
+        translation 0 0 0
+        children [
+          Shape {
+            appearance Appearance {
+              material Material {
+                diffuseColor 0.05 0.25 0.6   # metallic blue-ish
+                specularColor 0.3 0.3 0.3
+                shininess 64
+              }
+            }
+            geometry Box {
+              size 0.120 0.080 0.002       # chassis_width x chassis_length x thickness (m)
+            }
+          }
+        ]
+        physics Physics { density -1 mass IS mass_plate }
+        boundingObject USE PLATE_BOUND
+      }
+
+      # boundingObject for plate (reused)
+      DEF PLATE_BOUND Box { size 0.120 0.080 0.002 }
+
+      #========================
+      # Kickstand (transparent acrylic)
+      #========================
+      Transform {
+        translation 0 0 -0.008   # OpenSCAD: translate([0, 68 - 2, -8]) => Z offset -8mm => -0.008 m relative to plate center
+        children [
+          DEF KICKSTAND Solid {
+            children [
+              Shape {
+                appearance Appearance {
+                  material Material {
+                    diffuseColor 0.8 0.8 0.8
+                    transparency 0.45       # transparent acrylic
+                  }
+                }
+                geometry Box { size 0.055 0.068 0.002 }
+              }
+            ]
+            physics Physics { density -1 mass IS mass_kickstand }
+            boundingObject Box { size 0.055 0.068 0.002 }
+          }
+        ]
+      }
+
+      #========================
+      # Left and Right supports (approx)
+      #========================
+      Transform {
+        translation -0.060 0 -0.022   # left lsupport position (OpenSCAD -60,0,-22 mm)
+        rotation 0 1 0 1.57079633     # rotate([0,90,0]) in OpenSCAD
+        children [
+          DEF LSUPPORT_L Solid {
+            children [
+              Shape {
+                appearance Appearance {
+                  material Material { diffuseColor 0.6 0.6 0.6 }
+                }
+                geometry Box { size 0.040 0.040 0.002 }   # approximated rounded_box
+              }
+            ]
+            physics Physics { density -1 mass IS mass_lsupport_l }
+            boundingObject Box { size 0.040 0.040 0.002 }
+          }
+        ]
+      }
+      Transform {
+        translation 0.060 0 -0.022   # right lsupport (OpenSCAD 60,0,-22)
+        rotation 0 1 0 -1.57079633   # rotate([0,90,180]) equivalent
+        children [
+          DEF LSUPPORT_R Solid {
+            children [
+              Shape {
+                appearance Appearance {
+                  material Material { diffuseColor 0.6 0.6 0.6 }
+                }
+                geometry Box { size 0.040 0.040 0.002 }
+              }
+            ]
+            physics Physics { density -1 mass IS mass_lsupport_r }
+            boundingObject Box { size 0.040 0.040 0.002 }
+          }
+        ]
+      }
+
+      #========================
+      # Motor+shaft (left) and (right) — these are the rotating solids (endPoints of HingeJoints).
+      # The motor+shaft Solid contains motor geometry and a small shaft cylinder;
+      # the wheel is modeled as a separate Solid attached by the same HingeJoint endPoint.
+      #========================
+
+      # LEFT wheel assembly — placed at (OpenSCAD -76,-32 for shaft; wheel at 79,-32)
+      HingeJoint {
+        jointParameters HingeJointParameters { axis 1 0 0 }  # rotation about the X axis (wheels along X)
+        device [
+          RotationalMotor {
+            name "left_motor"
+            # maxTorque 2.0
+            # maxVelocity 10.0
+          }
+        ]
+        endPoint   # this Solid contains the motor+shaft; wheel is child Solid to allow collisions
+          DEF MOTOR_SHAFT_L Solid {
+            translation -0.036 0 -0.025   # OpenSCAD motor translate([-36,0,-25]) mm -> m
+            rotation 0 1 0 1.5708
+            children [
+              Shape {
+                appearance Appearance {
+                  material Material { diffuseColor 0.4 0.4 0.4 }
+                }
+                geometry Cylinder {  # motor cylinder h=45mm r=18mm -> height along Z in our local frame
+                  height 0.045
+                  radius 0.018
+                }
+              }
+              # shaft as a thin cylinder
+              Transform {
+                translation 0 0 -0.05   # shaft center (approx) (matching rotate/translate in SCAD)
+                children [
+                  Shape {
+                    appearance Appearance {
+                      material Material { diffuseColor 0.2 0.2 0.2 }
+                    }
+                    geometry Cylinder { height 0.130 radius 0.002 }  # shaft: h=30mm r=2mm
+                  }
+                ]
+              }
+            ]
+            physics Physics { density -1 mass IS mass_motor_l }
+            boundingObject Box { size 0.05 0.05 0.05 }
+          }
+      }
+
+      # Wheel itself is a separate Solid but attached to the same hinge (so it rotates with motor)
+      Transform {
+        translation 0.079 0 -0.032   # left wheel in OpenSCAD: translate([79,0,-32]) mm -> 0.079,0,-0.032
+        rotation 0 -1 0 1.57079633    # rotate([0,-90,0]) used in SCAD for the left wheel
+        children [
+          DEF WHEEL_L Solid {
+            children [
+              Shape {
+                appearance Appearance {
+                  material Material { diffuseColor 0.05 0.05 0.05 }
+                }
+                geometry Cylinder { height 0.025 radius 0.032 }  # h=25mm r=32mm
+              }
+            ]
+            physics Physics { density -1 mass IS mass_wheel_l }
+            boundingObject Cylinder { height 0.025 radius 0.032 }
+          }
+        ]
+      }
+
+      # RIGHT wheel assembly
+      HingeJoint {
+        jointParameters HingeJointParameters { axis 1 0 0 }
+        device [
+          RotationalMotor {
+            name "right_motor"
+            # maxTorque 2.0
+            # maxVelocity 10.0
+          }
+        ]
+        endPoint DEF MOTOR_SHAFT_R Solid {
+            translation 0.036 0 -0.025   # OpenSCAD translate([36,0,-25])
+            rotation 0 1 0 3.14159265    # rotate([0,-90,0]) vs SCAD; applied to align
+            children [
+              Shape {
+                appearance Appearance {
+                  material Material { diffuseColor 0.4 0.4 0.4 }
+                }
+                geometry Cylinder { height 0.045 radius 0.018 }
+              }
+              Transform {
+                translation 0.040 0 -0.032
+                children [
+                  Shape {
+                    appearance Appearance {
+                      material Material { diffuseColor 0.2 0.2 0.2 }
+                    }
+                    geometry Cylinder { height 0.030 radius 0.002 }
+                  }
+                ]
+              }
+            ]
+            physics Physics { density -1 mass IS mass_motor_r }
+            boundingObject Box { size 0.05 0.05 0.05 }
+          }
+      }
+
+      Transform {
+        translation -0.079 0 -0.032  # right wheel OpenSCAD translate([-79,0,-32])
+        rotation 0 1 0 1.57079633
+        children [
+          DEF WHEEL_R Solid {
+            children [
+              Shape {
+                appearance Appearance {
+                  material Material { diffuseColor 0.05 0.05 0.05 }
+                }
+                geometry Cylinder { height 0.025 radius 0.032 }
+              }
+            ]
+            physics Physics { density -1 mass IS mass_wheel_r }
+            boundingObject Cylinder { height 0.025 radius 0.032 }
+          }
+        ]
+      }
+
+      #========================
+      # Battery plate and top plate (transparent acrylic)
+      #========================
+      Transform {
+        translation 0 0 0.046    # battery_plate at z = +46 mm
+        children [
+          DEF BATTERY_PLATE Solid {
+            children [
+              Shape {
+                appearance Appearance {
+                  material Material {
+                    diffuseColor 0.95 0.95 0.95
+                    transparency 0.45
+                  }
+                }
+                geometry Box { size 0.120 0.080 0.002 }
+              }
+            ]
+            physics Physics { density -1 mass IS mass_battery_plate }
+            boundingObject Box { size 0.120 0.080 0.002 }
+          }
+
+          Transform {
+            translation 0 0 0.024    # top plate at battery_plate + 24 mm
+            children [
+              DEF TOP_PLATE Solid {
+                children [
+                  Shape {
+                    appearance Appearance {
+                      material Material {
+                        diffuseColor 0.95 0.95 0.95
+                        transparency 0.45
+                      }
+                    }
+                    geometry Box { size 0.120 0.080 0.002 }
+                  }
+                ]
+                physics Physics { density -1 mass IS mass_top_plate }
+                boundingObject Box { size 0.120 0.080 0.002 }
+              }
+            ]
+          }
+        ]
+      }
+
+      #========================
+      # Battery (transparent acrylic)
+      #========================
+      Transform {
+        translation 0 0 0.056  # battery center at z=56 mm
+        children [
+          DEF BATTERY Solid {
+            children [
+              Shape {
+                appearance Appearance {
+                  material Material {
+                    diffuseColor 0.9 0.9 0.9
+                    transparency 0.45
+                  }
+                }
+                geometry Box { size 0.080 0.055 0.022 }  # rounded_box approx
+              }
+            ]
+            physics Physics { density -1 mass IS mass_battery }
+            boundingObject Box { size 0.080 0.055 0.022 }
+          }
+        ]
+      }
+
+      #========================
+      # PCB (approx)
+      #========================
+      Transform {
+        translation 0 0 0.010
+        children [
+          DEF PCB Solid {
+            children [
+              Shape {
+                appearance Appearance {
+                  material Material { diffuseColor 0.1 0.6 0.1 }
+                }
+                geometry Box { size 0.095 0.080 0.002 }
+              }
+            ]
+            physics Physics { density -1 mass IS mass_pcb }
+            boundingObject Box { size 0.095 0.080 0.002 }
+          }
+        ]
+      }
+
+    ] # end children
+  } # end Robot
+}
