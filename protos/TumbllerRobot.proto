@@ -3,7 +3,7 @@
 PROTO TumbllerRobot [
   field SFVec3f    translation        0 0 0.064
   field SFRotation rotation           0 0 1 0
-  field SFString   controller         "generic_controller"
+  field SFString   controller         "<generic>"
 
   # Mass fields (kg) — sum ~0.8
   field SFFloat    mass_chassis       0.25
@@ -14,7 +14,6 @@ PROTO TumbllerRobot [
   field SFFloat    mass_top_plate     0.05
   field SFFloat    mass_supports      0.03
   field SFFloat    mass_kickstand     0.02
-  field SFFloat    mass_misc          0.01
 ]
 {
   Robot {
@@ -81,7 +80,7 @@ PROTO TumbllerRobot [
           }
           DEF MOTOR_SHAFT_LEFT_SHAFT Shape {
             appearance PBRAppearance { baseColor 0.7 0.7 0.7 }
-            geometry Cylinder { height 0.13 radius 0.002 }
+            geometry Cylinder { height 0.03 radius 0.002 }
           }
         ]
         boundingObject USE MOTOR_SHAFT_LEFT_BODY
@@ -290,24 +289,16 @@ PROTO TumbllerRobot [
       HingeJoint {
         jointParameters JointParameters { axis 1 0 0 }
         device RotationalMotor { name "left_motor" maxTorque 1.0 }
-        anchorSolid USE MOTOR_SHAFT_LEFT
-        endPointSolid USE LEFT_WHEEL
+        endPoint USE LEFT_WHEEL
       }
 
       HingeJoint {
         jointParameters JointParameters { axis 1 0 0 }
         device RotationalMotor { name "right_motor" maxTorque 1.0 }
-        anchorSolid USE MOTOR_SHAFT_RIGHT
-        endPointSolid USE RIGHT_WHEEL
+        endPoint USE RIGHT_WHEEL
       }
 
     ] # children
 
-    # Robot devices
-    devices [
-      Gyro { name "gyro" }
-      Accelerometer { name "accel" }
-      DistanceSensor { name "ds_front" }
-    ]
   } # Robot
 }
