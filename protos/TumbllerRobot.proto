@@ -24,6 +24,7 @@ PROTO TumbllerRobot [
     children [
       # Chassis (lowest plate) - metallic blue
       DEF CHASSIS Solid {
+        name "chassis"
         translation 0 0 0
         rotation 0 0 1 0
         physics Physics { density -1 mass IS mass_chassis }
@@ -42,6 +43,7 @@ PROTO TumbllerRobot [
 
       # Battery plate (transparent acrylic)
       DEF BATTERY_PLATE Solid {
+        name "battery_plate"
         translation 0 0 0.046
         rotation 0 0 1 0
         physics Physics { density -1 mass IS mass_supports }
@@ -56,6 +58,7 @@ PROTO TumbllerRobot [
 
       # Top plate (transparent acrylic)
       DEF TOP_PLATE Solid {
+        name "top_plate"
         translation 0 0 0.07
         rotation 0 0 1 0
         physics Physics { density -1 mass IS mass_top_plate }
@@ -70,6 +73,7 @@ PROTO TumbllerRobot [
 
       # Battery (black plastic)
       DEF BATTERY Solid {
+        name "battery_pack"
         translation 0 0 0.056
         rotation 0 0 1 0
         physics Physics { density -1 mass IS mass_battery }
@@ -84,6 +88,7 @@ PROTO TumbllerRobot [
 
       # PCB (green)
       DEF PCB Solid {
+        name "pcb_plate"
         translation 0 0 0.01
         rotation 0 0 1 0
         physics Physics { density -1 mass IS mass_pcb }
@@ -100,6 +105,7 @@ PROTO TumbllerRobot [
 
       # Kickstand (transparent acrylic)
       DEF KICKSTAND Solid {
+        name "kickstand_plate"
         translation 0 0.04 -0.008
         rotation 0 0 1 0
         physics Physics { density -1 mass IS mass_kickstand }
@@ -114,6 +120,7 @@ PROTO TumbllerRobot [
 
       # Supporters between plates (golden)
       DEF SUPPORTER_FLAT Solid {
+        name "middle_supporter1"
         translation 0.054 0.036 0.058
         rotation 0 0 0 0
         physics Physics { density -1 mass IS mass_supports }
@@ -127,6 +134,7 @@ PROTO TumbllerRobot [
       }
       
       Solid {
+        name "middle_supporter2"
         translation 0.054 -0.036 0.058
         rotation 0 0 0 0
         physics Physics { density -1 mass IS mass_supports }
@@ -137,6 +145,7 @@ PROTO TumbllerRobot [
       }
       
       Solid {
+        name "middle_supporter3"
         translation -0.054 -0.036 0.058
         rotation 0 0 0 0
         physics Physics { density -1 mass IS mass_supports }
@@ -147,6 +156,7 @@ PROTO TumbllerRobot [
       }
       
       Solid {
+        name "middle_supporter4"
         translation -0.054 0.036 0.058
         rotation 0 0 0 0
         physics Physics { density -1 mass IS mass_supports }
@@ -157,6 +167,7 @@ PROTO TumbllerRobot [
       }
       
       Solid {
+        name "long_supporter1"
         translation 0.054 0.036 0.023
         rotation 0 0 0 0
         physics Physics { density -1 mass IS mass_supports }
@@ -170,6 +181,7 @@ PROTO TumbllerRobot [
       }
       
       Solid {
+        name "long_supporter2"
         translation 0.054 -0.036 0.023
         rotation 0 0 0 0
         physics Physics { density -1 mass IS mass_supports }
@@ -180,6 +192,7 @@ PROTO TumbllerRobot [
       }
       
       Solid {
+        name "long_supporter3"
         translation -0.054 -0.036 0.023
         rotation 0 0 0 0
         physics Physics { density -1 mass IS mass_supports }
@@ -190,6 +203,7 @@ PROTO TumbllerRobot [
       }
       
       Solid {
+        name "long_supporter4"
         translation -0.054 0.036 0.023
         rotation 0 0 0 0
         physics Physics { density -1 mass IS mass_supports }
@@ -201,6 +215,7 @@ PROTO TumbllerRobot [
 
       # Left support (lsupport) approximated
       DEF LSUPPORT Solid {
+        name "lsupport_left"
         translation -0.06 0 -0.022
         rotation 0 1 0 1.57079633
         physics Physics { density -1 mass IS mass_supports }
@@ -212,6 +227,7 @@ PROTO TumbllerRobot [
 
       # Right support
       DEF RSUPPORT Solid {
+        name "lsupport_right"
         translation 0.06 0 -0.022
         rotation 0 1 0 1.57079633
         physics Physics { density -1 mass IS mass_supports }
@@ -223,30 +239,44 @@ PROTO TumbllerRobot [
 
       # Left wheel
       DEF LEFT_WHEEL Solid {
+        name "wheel_left"
         translation 0.079 0  -0.032
         rotation 0 1 0 1.57079633
         physics Physics { density -1 mass IS mass_wheel }
         children [
-          DEF LEFT_WHEEL_SHAPE Shape {
+          DEF WHEEL_SHAPE Shape {
             appearance PBRAppearance { baseColor 0.1 0.1 0.1 }
             geometry Cylinder { height 0.025 radius 0.032 }
           }
+          Transform {
+            translation 0 0 -0.015
+            children [
+              DEF SHAFT_SHAPE Shape {
+                appearance PBRAppearance { baseColor 0.7 0.7 0.7 }
+                geometry Cylinder { height 0.03 radius 0.002 }
+              }
+            ]
+          }
         ]
-        boundingObject USE LEFT_WHEEL_SHAPE
+        boundingObject USE WHEEL_SHAPE
       }
 
       # Right wheel
       DEF RIGHT_WHEEL Solid {
+        name "wheel_right"
         translation -0.079 0 -0.032
         rotation 0 1 0 1.57079633
         physics Physics { density -1 mass IS mass_wheel }
         children [
-          DEF RIGHT_WHEEL_SHAPE Shape {
-            appearance PBRAppearance { baseColor 0.1 0.1 0.1 }
-            geometry Cylinder { height 0.025 radius 0.032 }
+          USE WHEEL_SHAPE
+          Transform {
+            translation 0 0 0.015
+            children [
+              USE SHAFT_SHAPE
+            ]
           }
         ]
-        boundingObject USE RIGHT_WHEEL_SHAPE
+        boundingObject USE WHEEL_SHAPE
       }
 
       # Motor+shaft left (single solid)
@@ -258,10 +288,6 @@ PROTO TumbllerRobot [
           DEF MOTOR_SHAFT_LEFT_BODY Shape {
             appearance PBRAppearance { baseColor 0.7 0.7 0.7 metalness 0.6 }
             geometry Cylinder { height 0.045 radius 0.018 }
-          }
-          DEF MOTOR_SHAFT_LEFT_SHAFT Shape {
-            appearance PBRAppearance { baseColor 0.7 0.7 0.7 }
-            geometry Cylinder { height 0.03 radius 0.002 }
           }
         ]
         boundingObject USE MOTOR_SHAFT_LEFT_BODY
