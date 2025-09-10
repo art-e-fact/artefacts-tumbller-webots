@@ -68,3 +68,4 @@ controllers/*/*
 # Restore dirs
 !controllers/*/
 
+*.swp
