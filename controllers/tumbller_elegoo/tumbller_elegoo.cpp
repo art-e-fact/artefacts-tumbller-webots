@@ -24,7 +24,7 @@ using namespace webots;
 
 // Found specs
 // https://robu.in/product/rs-37-500-rpm-high-torque-side-shaft-dc-geared-motor/#tab-specification
-unsigned short torque_37GB520 = 0.196133; // N.m, from specs at 2 Kg-cm
+double torque_37GB520 = 0.196133; // N.m, from specs at 2 Kg-cm
 
 // From Elegoo
 unsigned long start_prev_time = 0;
