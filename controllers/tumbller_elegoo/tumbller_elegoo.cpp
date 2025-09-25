@@ -13,6 +13,7 @@
 // <webots/DistanceSensor.hpp>, <webots/Motor.hpp>, etc.
 // and/or to add some other includes
 #include <webots/Accelerometer.hpp>
+#include <webots/Gyro.hpp>
 #include <webots/Motor.hpp>
 #include <webots/Robot.hpp>
 
@@ -22,7 +23,8 @@
 using namespace webots;
 
 // Found specs
-unsigned short torque_37GB520 = 1; // kg.cm
+// https://robu.in/product/rs-37-500-rpm-high-torque-side-shaft-dc-geared-motor/#tab-specification
+unsigned short torque_37GB520 = 0.196133; // N.m, from specs at 2 Kg-cm
 
 // From Elegoo
 unsigned long start_prev_time = 0;
@@ -46,7 +48,8 @@ int main(int argc, char **argv) {
   Robot *robot = new Robot();
 
   // get the time step of the current world.
-  int timeStep = (int)robot->getBasicTimeStep();
+  // Balancing loop time from the Elegoo code (MSTimer2 period)
+  int timeStep = 5; //(int)robot->getBasicTimeStep();
 
   // You should insert a getDevice-like function in order to get the
   // instance of a device of the robot. Something like:
@@ -55,19 +58,23 @@ int main(int argc, char **argv) {
   //  ds->enable(timeStep);
   Motor *leftMotor = robot->getMotor("left_motor");
   Motor *rightMotor = robot->getMotor("right_motor");
-  leftMotor->setPosition(INFINITY);
-  rightMotor->setPosition(INFINITY);
-  leftMotor->setVelocity(0.0);
-  rightMotor->setVelocity(0.0);
+  //leftMotor->setPosition(INFINITY);
+  //rightMotor->setPosition(INFINITY);
+  //leftMotor->setVelocity(0.0);
+  //rightMotor->setVelocity(0.0);
   
-  Accelerometer *mpu = robot->getAccelerometer("mpu");
-  mpu->enable(5); // Value from Elegoo source code
-
+  Accelerometer *accelerometer = robot->getAccelerometer("MPU-6050-Accelerometer");
+  accelerometer->enable(1);
+  
+  Gyro *gyroscope = robot->getGyro("MPU-6050-Gyroscope");
+  gyroscope->enable(1);
+  
   // Main loop:
   // - perform simulation steps until Webots is stopping the controller
   start_prev_time = millis();
   std::vector<double> motor_cmd;
-  const double * mpu_readings;
+  const double * acc;
+  const double * gyr;
   while (robot->step(timeStep) != -1) {
     // Read the sensors:
     // Enter here functions to read sensor data, like:
@@ -94,20 +101,16 @@ int main(int argc, char **argv) {
     }
     //leftMotor->setVelocity(3);
     //rightMotor->setVelocity(-3);
-    std::cout << "looping" << std::endl;
-    mpu_readings = mpu->getValues();
-    std::cout << "mpu read" << std::endl;
-    motor_cmd = balanceCar(mpu_readings[0], mpu_readings[1], mpu_readings[2], 0, 0, 9.81);
+    acc = accelerometer->getValues();
+    gyr = gyroscope->getValues();
+    motor_cmd = balanceCar(acc[0], acc[1], acc[2], gyr[0], gyr[1], gyr[2]);
+    leftMotor->setTorque(torque_37GB520 * motor_cmd.at(0));
+    rightMotor->setTorque(torque_37GB520 * motor_cmd.at(1));
     
-    std::cout << "ready to apply torque" << std::endl;
-    std::cout << torque_37GB520 << std::endl;
-    std::cout << motor_cmd[1] << std::endl;
-    leftMotor->setTorque(torque_37GB520 * motor_cmd[0]);
-    rightMotor->setTorque(torque_37GB520 * motor_cmd[1]);
-    
-    std::cout << "torque applied" << std::endl;
-    
-    for (int i: motor_cmd) {
+    std::cout << "Acc: " << acc[0] << " " << acc[1] << " ";
+    std::cout << "Gyr: " << gyr[0] << " " << gyr[1] << " ";
+    std::cout << "Cmd: ";
+    for (double i: motor_cmd) {
       std::cout << i << " ";
     }
     std::cout << std::endl;

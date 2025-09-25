@@ -108,7 +108,7 @@ std::vector<double> balanceCar(int16_t ax, int16_t ay, int16_t az, int16_t gx, i
     carStop();
   }
 
-  if (pwm_left < 0)
+  /*if (pwm_left < 0)
   {
     //analogWrite(PWMA_LEFT, -pwm_left);
     pwm_left = -pwm_left;
@@ -117,10 +117,12 @@ std::vector<double> balanceCar(int16_t ax, int16_t ay, int16_t az, int16_t gx, i
   {
     //analogWrite(PWMB_RIGHT, -pwm_right);
     pwm_right = -pwm_right;
-  }
+  }*/
 
-  std::vector<double> data;
-  data.assign(pwm_left, pwm_right);
+  std::vector<double> data (2);
+  data.at(0) = pwm_left;
+  data.at(1) = pwm_right;
+  
   return data;
 }
 

@@ -112,6 +112,18 @@ PROTO TumbllerRobot [
         ]
         boundingObject USE PCB_SHAPE
       }
+      
+      Accelerometer {
+        name "MPU-6050-Accelerometer"
+        translation 0 0 0.01
+        rotation 0 0 1 0
+      }
+      
+      Gyro {
+        name "MPU-6050-Gyroscope"
+        translation 0 0 0.01
+        rotation 0 0 1 0
+      }
 
       # Kickstand (transparent acrylic)
       DEF KICKSTAND Solid {
