@@ -104,16 +104,19 @@ int main(int argc, char **argv) {
     acc = accelerometer->getValues();
     gyr = gyroscope->getValues();
     motor_cmd = balanceCar(acc[0], acc[1], acc[2], gyr[0], gyr[1], gyr[2]);
-    leftMotor->setTorque(torque_37GB520 * motor_cmd.at(0));
-    rightMotor->setTorque(torque_37GB520 * motor_cmd.at(1));
-    
+
+    double left = torque_37GB520 * motor_cmd.at(0) / 100.0;
+    double right = torque_37GB520 * motor_cmd.at(1) / 100.0;
+    leftMotor->setTorque(left);
+    rightMotor->setTorque(right);
+
     std::cout << "Acc: " << acc[0] << " " << acc[1] << " ";
     std::cout << "Gyr: " << gyr[0] << " " << gyr[1] << " ";
     std::cout << "Cmd: ";
     for (double i: motor_cmd) {
       std::cout << i << " ";
     }
-    std::cout << std::endl;
+    std::cout << "Torque: " << left << " " << right << std::endl;
   };
 
   // Enter here exit cleanup code.
