@@ -141,7 +141,54 @@ PROTO TumbllerRobot [
       }
 
       # Supporters between plates (golden)
-      DEF SUPPORTER_FLAT Solid {
+      Solid {
+        name "pcb_supporter1"
+        translation 0.03 0.030 0.005
+        rotation 0 0 0 0
+        physics Physics { density -1 mass IS mass_supports }
+        children [
+          DEF PCB_SUPPORTER_FLAT_SHAPE Shape {
+            appearance PBRAppearance { baseColor 0.85 0.67 0.13 metalness 0.6 }
+            geometry Cylinder { height 0.01 radius 0.002 }
+          }
+        ]
+        boundingObject USE PCB_SUPPORTER_FLAT_SHAPE
+      }
+      
+      Solid {
+        name "pcb_supporter2"
+        translation 0.03 -0.030 0.005
+        rotation 0 0 0 0
+        physics Physics { density -1 mass IS mass_supports }
+        children [
+          USE PCB_SUPPORTER_FLAT_SHAPE
+        ]
+        boundingObject USE PCB_SUPPORTER_FLAT_SHAPE
+      }
+      
+      Solid {
+        name "pcb_supporter3"
+        translation -0.03 -0.030 0.005
+        rotation 0 0 0 0
+        physics Physics { density -1 mass IS mass_supports }
+        children [
+          USE PCB_SUPPORTER_FLAT_SHAPE
+        ]
+        boundingObject USE PCB_SUPPORTER_FLAT_SHAPE
+      }
+      
+      Solid {
+        name "pcb_supporter4"
+        translation -0.03 0.030 0.005
+        rotation 0 0 0 0
+        physics Physics { density -1 mass IS mass_supports }
+        children [
+          USE PCB_SUPPORTER_FLAT_SHAPE
+        ]
+        boundingObject USE PCB_SUPPORTER_FLAT_SHAPE
+      }
+      
+      Solid {
         name "middle_supporter1"
         translation 0.054 0.036 0.058
         rotation 0 0 0 0
@@ -259,7 +306,7 @@ PROTO TumbllerRobot [
         boundingObject USE RSUPPORT_SHAPE
       }
 
-      # Motor+shaft left (single solid)
+      # Motor left (single solid)
       DEF MOTOR_SHAFT_LEFT Solid {
         name "motor_left"
         translation -0.036 0 -0.025
@@ -299,6 +346,7 @@ PROTO TumbllerRobot [
               appearance PBRAppearance { baseColor 0.1 0.1 0.1 }
               geometry Cylinder { height 0.025 radius 0.032 }
             }
+            # Tiny wheel marker to make rotation visible
             Transform {
               translation -0.030 0 0.008
               children [
@@ -315,7 +363,7 @@ PROTO TumbllerRobot [
         }
       }
       
-      # Motor+shaft right
+      # Motor right
       DEF MOTOR_SHAFT_RIGHT Solid {
        name "motor_right"
        translation 0.036 0 -0.025
