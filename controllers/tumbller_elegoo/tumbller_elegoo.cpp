@@ -70,50 +70,24 @@ int main(int argc, char **argv) {
   gyroscope->enable(1);
   
   // Main loop:
-  // - perform simulation steps until Webots is stopping the controller
-  start_prev_time = millis();
-  std::vector<double> motor_cmd;
+  std::vector<double> motors_pwm;
   const double * acc;
   const double * gyr;
+  
   while (robot->step(timeStep) != -1) {
-    // Read the sensors:
-    // Enter here functions to read sensor data, like:
-    //  double val = ds->getValue();
-
-    // Process sensor data here.
-
-    // Enter here functions to send actuator commands, like:
-    //  motor->setPosition(10.0);
-    static unsigned long print_time;
-    if (millis() - print_time > 100)
-    {
-      print_time = millis();
-      //Serial.println(kalmanfilter.angle);
-    }
-    static unsigned long start_time;
-    if (millis() - start_time < 10)
-    {
-      //carStop();
-    }
-    if (millis() - start_time == 2000) // Enter the pendulum, the car balances...
-    {
-      //key_value = '5';   
-    }
-    //leftMotor->setVelocity(3);
-    //rightMotor->setVelocity(-3);
     acc = accelerometer->getValues();
     gyr = gyroscope->getValues();
-    motor_cmd = balanceCar(acc[0], acc[1], acc[2], gyr[0], gyr[1], gyr[2]);
+    motors_pwm = balanceCar(acc[0], acc[1], acc[2], gyr[0], gyr[1], gyr[2]);
 
-    double left = torque_37GB520 * motor_cmd.at(0) / 100.0;
-    double right = torque_37GB520 * motor_cmd.at(1) / 100.0;
+    double left = torque_37GB520 * motors_pwm.at(0) / 255.0;
+    double right = torque_37GB520 * motors_pwm.at(1) / 255.0;
     leftMotor->setTorque(left);
     rightMotor->setTorque(right);
 
-    std::cout << "Acc: " << acc[0] << " " << acc[1] << " ";
-    std::cout << "Gyr: " << gyr[0] << " " << gyr[1] << " ";
+    //std::cout << "Acc: " << acc[0] << " " << acc[1] << " ";
+    //std::cout << "Gyr: " << gyr[0] << " " << gyr[1] << " ";
     std::cout << "Cmd: ";
-    for (double i: motor_cmd) {
+    for (double i: motors_pwm) {
       std::cout << i << " ";
     }
     std::cout << "Torque: " << left << " " << right << std::endl;
