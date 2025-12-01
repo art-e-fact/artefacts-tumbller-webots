@@ -37,3 +37,8 @@ This close up of the wheel shows a white dot to help showing actual rotation (th
 <p align="center">
 <img width="410" height="232" alt="Screenshot from 2025-12-01 12-12-34" src="https://github.com/user-attachments/assets/5a73eded-4c3e-4b14-b9fe-4e54cbe4a2ca" />
 </p>
+
+Thanks and licensing
+--------------------
+
+This work derives code from the [Elegoo Tumbller source](https://github.com/elegooofficial/ELEGOO-TumbllerV1.1-Self-Balancing-Car-Tutorial) (unclear license, so linking to their code), which is a fun bot to work with---recommanded to all.
